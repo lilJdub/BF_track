@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>體重與體脂紀錄</title>
+  <title>健康數據完整紀錄</title>
   <style>
     * { box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      max-width: 420px;
-      margin: 40px auto;
-      padding: 20px;
+      max-width: 450px;
+      margin: 30px auto;
+      padding: 15px;
       background-color: #f8f9fa;
     }
     .card {
@@ -20,17 +20,19 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
     h2 { margin-top: 0; color: #333; text-align: center; }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; margin-bottom: 6px; font-weight: 600; color: #495057; }
-    input {
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    label { display: block; margin-bottom: 5px; font-weight: 600; color: #495057; font-size: 14px; }
+    input, select {
       width: 100%;
-      padding: 12px;
-      font-size: 16px;
+      padding: 10px;
+      font-size: 15px;
       border: 1px solid #ced4da;
       border-radius: 6px;
       outline: none;
     }
-    input:focus { border-color: #007bff; }
+    input:focus, select:focus { border-color: #007bff; }
     button {
       width: 100%;
       padding: 12px;
@@ -41,44 +43,69 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.2s;
+      margin-top: 10px;
     }
-    button:hover { background: #0056b3; }
     button:disabled { background: #adb5bd; cursor: not-allowed; }
     #status { margin-top: 15px; font-weight: bold; text-align: center; font-size: 14px; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>📊 體重 & 體脂紀錄</h2>
+    <h2>📊 健康數據紀錄</h2>
+    
     <div class="form-group">
-      <label for="weight">體重 (kg)</label>
-      <input type="number" id="weight" step="0.1" placeholder="例如: 68.5" inputmode="decimal">
+      <label for="person">紀錄人員</label>
+      <input type="text" id="person" placeholder="例如: Alex">
     </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="weight">體重 (kg)</label>
+        <input type="number" id="weight" step="0.1" inputmode="decimal">
+      </div>
+      <div class="form-group">
+        <label for="bodyfat">體脂肪 (%)</label>
+        <input type="number" id="bodyfat" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="muscle">肌肉量 (kg)</label>
+        <input type="number" id="muscle" step="0.1" inputmode="decimal">
+      </div>
+      <div class="form-group">
+        <label for="intesfat">內臟脂肪</label>
+        <input type="number" id="intesfat" step="1" inputmode="numeric">
+      </div>
+    </div>
+
     <div class="form-group">
-      <label for="fat">體脂肪 (%)</label>
-      <input type="number" id="fat" step="0.1" placeholder="例如: 21.5" inputmode="decimal">
+      <label for="calories">每日攝取卡路里 (kcal)</label>
+      <input type="number" id="calories" step="10" inputmode="numeric">
     </div>
+
     <button id="btn" onclick="submitData()">送出紀錄</button>
     <p id="status"></p>
   </div>
 
   <script>
-    // ⚠️ 請將下方網址替換為你在 Google Apps Script 取得的部署網址
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbxN9F73Zx1-Y3K0LOH0MCLTZzFHkSxCzKNjlAnVs79b1jA0HP6XBeaiueG5RGuXUgpdVQ/exec";
+    // ⚠️ 貼上你在 Google Apps Script 重新部署後取得的 Web App URL
+    const GAS_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL";
 
     async function submitData() {
-      const weightInput = document.getElementById('weight');
-      const fatInput = document.getElementById('fat');
+      const person = document.getElementById('person').value;
+      const weight = document.getElementById('weight').value;
+      const bodyfat = document.getElementById('bodyfat').value;
+      const muscle = document.getElementById('muscle').value;
+      const intesfat = document.getElementById('intesfat').value;
+      const calories = document.getElementById('calories').value;
       const status = document.getElementById('status');
       const btn = document.getElementById('btn');
 
-      const weight = weightInput.value;
-      const fat = fatInput.value;
-
-      if (!weight || !fat) {
+      if (!person || !weight) {
         status.style.color = "#dc3545";
-        status.innerText = "⚠️ 請完整填寫體重與體脂肪！";
+        status.innerText = "⚠️ 請至少填寫姓名與體重！";
         return;
       }
 
@@ -91,16 +118,28 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ weight: weight, fat: fat })
+          body: JSON.stringify({
+            person: person,
+            weight: weight,
+            bodyfat: bodyfat,
+            muscle: muscle,
+            intesfat: intesfat,
+            calories: calories
+          })
         });
         
         status.style.color = "#28a745";
         status.innerText = "✅ 紀錄成功！已同步至 Google Sheets";
-        weightInput.value = '';
-        fatInput.value = '';
+        
+        // 清空數字欄位
+        document.getElementById('weight').value = '';
+        document.getElementById('bodyfat').value = '';
+        document.getElementById('muscle').value = '';
+        document.getElementById('intesfat').value = '';
+        document.getElementById('calories').value = '';
       } catch (err) {
         status.style.color = "#dc3545";
-        status.innerText = "❌ 傳送失敗，請檢查 API 網址設定";
+        status.innerText = "❌ 傳送失敗，請確認 API 網址";
       } finally {
         btn.disabled = false;
       }
