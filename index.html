@@ -97,12 +97,12 @@
 
   <!-- 圖表區塊 -->
   <div class="card">
-    <h2>📈 近一週體重趨勢</h2>
-    <canvas id="weightChart"></canvas>
+    <h2>📈 近一週體脂肪率趨勢</h2>
+    <canvas id="bodyfatChart"></canvas>
   </div>
 
   <script>
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbzeuO5NlheIxYRfgq_T5PYJTmeo9q-orjE3Hw9Pa_J_pJrQ6n3jJxdN5VFFbkYPemr-dA/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyt5e7zS1x8MXnEYITHnedX_arL5ruFhSgH49MZ5V_zGeK7S1dTb59pqRTalJz-btjz0g/exec";
     let chartInstance = null;
 
     // 頁面載入後自動取得並繪製圖表
@@ -181,18 +181,18 @@
       // 擷取所有的日期標籤 (不重複，取最近 7 天)
       const labels = [...new Set(data.map(d => d.date))].slice(-7);
 
-      // 整理 比比 與 皮皮 的體重數據
+      // 整理 比比 與 皮皮 的體脂肪數據
       const bibiData = labels.map(date => {
         const item = data.filter(d => d.date === date && d.person === "比比").pop();
-        return item ? item.weight : null;
+        return item ? item.bodyfat : null;
       });
 
       const pipiData = labels.map(date => {
         const item = data.filter(d => d.date === date && d.person === "皮皮").pop();
-        return item ? item.weight : null;
+        return item ? item.bodyfat : null;
       });
 
-      const ctx = document.getElementById('weightChart').getContext('2d');
+      const ctx = document.getElementById('bodyfatChart').getContext('2d');
 
       // 若已有舊圖表先銷毀，再重新繪製
       if (chartInstance) {
@@ -205,7 +205,7 @@
           labels: labels,
           datasets: [
             {
-              label: '比比 (kg)',
+              label: '比比 (%)',
               data: bibiData,
               borderColor: '#ff6384',
               backgroundColor: 'rgba(255, 99, 132, 0.1)',
@@ -213,7 +213,7 @@
               spanGaps: true
             },
             {
-              label: '皮皮 (kg)',
+              label: '皮皮 (%)',
               data: pipiData,
               borderColor: '#36a2eb',
               backgroundColor: 'rgba(54, 162, 235, 0.1)',
@@ -230,7 +230,7 @@
           scales: {
             y: {
               beginAtZero: false,
-              title: { display: true, text: '體重 (kg)' }
+              title: { display: true, text: '體脂肪 (%)' }
             }
           }
         }
