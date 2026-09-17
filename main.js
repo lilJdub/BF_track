@@ -1,64 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>健康數據完整紀錄</title>
-  <!-- 1. 修正：引入 Chart.js 圖表庫 -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="style.css">
-  <script src="main.js" defer></script>
-</head>
-<body>
-  <div class="card">
-    <h2>📊 健康數據紀錄</h2>
-    
-    <div class="form-group">
-      <label for="person">紀錄人員</label>
-      <select id="person">
-        <option value="比比">比比</option>
-        <option value="皮皮">皮皮</option>
-      </select>
-    </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="weight">體重 (kg)</label>
-        <input type="number" id="weight" step="0.1" inputmode="decimal">
-      </div>
-      <div class="form-group">
-        <label for="bodyfat">體脂肪 (%)</label>
-        <input type="number" id="bodyfat" step="0.1" inputmode="decimal">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label for="muscle">肌肉量 (%)</label>
-        <input type="number" id="muscle" step="0.1" inputmode="decimal">
-      </div>
-      <div class="form-group">
-        <label for="intestinefat">內臟脂肪</label>
-        <input type="number" id="intestinefat" step="1" inputmode="numeric">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="calories">每日攝取卡路里 (kcal)</label>
-      <input type="number" id="calories" step="10" inputmode="numeric">
-    </div>
-
-    <button id="btn" onclick="submitData()">送出紀錄</button>
-    <p id="status"></p>
-  </div>
-
-  <!-- 圖表區塊 -->
-  <div class="card">
-    <h2>📈 近一週體脂肪率趨勢</h2>
-    <canvas id="bodyfatChart"></canvas>
-  </div>
-
-  <script>
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyt5e7zS1x8MXnEYITHnedX_arL5ruFhSgH49MZ5V_zGeK7S1dTb59pqRTalJz-btjz0g/exec";
     let chartInstance = null;
 
@@ -193,6 +133,3 @@
         }
       });
     }
-  </script>
-</body>
-</html>
